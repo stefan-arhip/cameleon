@@ -1,5 +1,7 @@
 BMP/
 BMP2/
+backup/
+
 *.exe
 *.dbg
 *.ini
