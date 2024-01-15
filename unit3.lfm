@@ -1,0 +1,135 @@
+object fSettings: TfSettings
+  Left = 865
+  Height = 315
+  Top = 118
+  Width = 350
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsDialog
+  Caption = 'Settings'
+  ClientHeight = 315
+  ClientWidth = 350
+  OnClose = FormClose
+  OnCreate = FormCreate
+  Position = poMainFormCenter
+  SessionProperties = 'deNewLocation.Directory;edAddText.Text;rbNewLocation.Checked;rbSameLocation.Checked;rgResize.ItemIndex;cbThumbnail.Checked'
+  LCLVersion = '1.6.0.4'
+  object ButtonPanel1: TButtonPanel
+    Left = 6
+    Height = 34
+    Top = 275
+    Width = 338
+    OKButton.Name = 'OKButton'
+    OKButton.DefaultCaption = True
+    HelpButton.Name = 'HelpButton'
+    HelpButton.DefaultCaption = True
+    CloseButton.Name = 'CloseButton'
+    CloseButton.DefaultCaption = True
+    CancelButton.Name = 'CancelButton'
+    CancelButton.DefaultCaption = True
+    TabOrder = 0
+    ShowButtons = [pbClose]
+  end
+  object rgResize: TRadioGroup
+    Left = 8
+    Height = 81
+    Top = 8
+    Width = 333
+    AutoFill = True
+    Caption = 'Reduce image size to be supported by device'
+    ChildSizing.LeftRightSpacing = 6
+    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
+    ChildSizing.EnlargeVertical = crsHomogenousChildResize
+    ChildSizing.ShrinkHorizontal = crsScaleChilds
+    ChildSizing.ShrinkVertical = crsScaleChilds
+    ChildSizing.Layout = cclLeftToRightThenTopToBottom
+    ChildSizing.ControlsPerLine = 2
+    ClientHeight = 61
+    ClientWidth = 329
+    Columns = 2
+    ItemIndex = 0
+    Items.Strings = (
+      'No resizing'
+      'Winca S100'
+      'Winca S160 small'
+      'Winca S160 large'
+    )
+    OnSelectionChanged = rgResizeSelectionChanged
+    TabOrder = 1
+  end
+  object gbOutput: TGroupBox
+    Left = 8
+    Height = 144
+    Top = 96
+    Width = 333
+    Caption = 'Save output in'
+    ClientHeight = 124
+    ClientWidth = 329
+    TabOrder = 2
+    object rbSameLocation: TRadioButton
+      Left = 8
+      Height = 19
+      Top = 8
+      Width = 258
+      Caption = 'Same location as source, add text to filename'
+      Checked = True
+      OnChange = rbSameLocationChange
+      TabOrder = 1
+      TabStop = True
+    end
+    object edAddText: TEdit
+      Left = 48
+      Height = 23
+      Top = 32
+      Width = 240
+      TabOrder = 0
+      Text = 'cameleon'
+    end
+    object rbNewLocation: TRadioButton
+      Left = 8
+      Height = 19
+      Top = 64
+      Width = 221
+      Caption = 'New location, keep the same filename'
+      TabOrder = 2
+    end
+    object deNewLocation: TDirectoryEdit
+      Left = 48
+      Height = 23
+      Top = 88
+      Width = 264
+      Directory = '%AppDir%'
+      ShowHidden = False
+      ButtonWidth = 23
+      NumGlyphs = 1
+      Flat = True
+      Enabled = False
+      MaxLength = 0
+      TabOrder = 3
+      Text = '%AppDir%'
+    end
+  end
+  object Label1: TLabel
+    Left = 243
+    Height = 15
+    Top = 88
+    Width = 96
+    Alignment = taRightJustify
+    AutoSize = False
+    ParentColor = False
+  end
+  object cbThumbnail: TCheckBox
+    Left = 24
+    Height = 19
+    Top = 248
+    Width = 158
+    Caption = 'Create .png thumbnail file'
+    Enabled = False
+    TabOrder = 3
+  end
+  object IniPropStorage1: TIniPropStorage
+    StoredValues = <>
+    IniFileName = 'Cameleon.ini'
+    left = 280
+    top = 8
+  end
+end
