@@ -31,7 +31,7 @@ type
     { private declarations }
   public
     { public declarations }
-    Procedure SetSettings;
+    procedure SetSettings;
   end;
 
 var
@@ -41,47 +41,49 @@ implementation
 
 {$R *.lfm}
 
-Uses Unit1;
+uses Unit1;
 
-{ TfSettings }
+  { TfSettings }
 
 procedure TfSettings.rbSameLocationChange(Sender: TObject);
 begin
-  edAddText.Enabled:= rbSameLocation.Checked;
-  deNewLocation.Enabled:= rbNewLocation.Checked;
-
+  edAddText.Enabled := rbSameLocation.Checked;
+  deNewLocation.Enabled := rbNewLocation.Checked;
 
 end;
 
 procedure TfSettings.rgResizeSelectionChanged(Sender: TObject);
-Var strResize: String= 'Create .png thumbnail file';
-    i: Integer;
+var
+  strResize: string = 'Create .png thumbnail file';
+  i: integer;
 begin
-  i:= rgResize.ItemIndex- 1;
-  Label1.Caption:= '';
-  cbThumbnail.Caption:= strResize;
-  cbThumbnail.Enabled:= rgResize.ItemIndex> 0;
-  If rgResize.ItemIndex> 0 Then
-    Begin
-      Label1.Caption:= Format('%d x %d', [cWinca[i].Width, cWinca[i].Height]);
-      cbThumbnail.Caption:= cbThumbnail.Caption+ Format(' (%d x %d)', [cWinca[i].ThumbWidth, cWinca[i].ThumbHeight]);
-    End;
+  i := rgResize.ItemIndex - 1;
+  Label1.Caption := '';
+  cbThumbnail.Caption := strResize;
+  cbThumbnail.Enabled := rgResize.ItemIndex > 0;
+  if rgResize.ItemIndex > 0 then
+  begin
+    Label1.Caption := Format('%d x %d', [cWinca[i].Width, cWinca[i].Height]);
+    cbThumbnail.Caption := cbThumbnail.Caption + Format(' (%d x %d)',
+      [cWinca[i].ThumbWidth, cWinca[i].ThumbHeight]);
+  end;
 end;
 
 procedure TfSettings.FormCreate(Sender: TObject);
-Var i: Integer;
+var
+  i: integer;
 begin
-  IniPropStorage1.IniFileName:= ChangeFileExt(ParamStr(0), '.ini');
-  deNewLocation.Directory:= AppDir;
+  IniPropStorage1.IniFileName := ChangeFileExt(ParamStr(0), '.ini');
+  deNewLocation.Directory := AppDir;
   rgResize.Items.Clear;
   rgResize.Items.Add('No resizing');
-  For i:= Low(cWinca) To High(cWinca) Do
+  for i := Low(cWinca) to High(cWinca) do
     rgResize.Items.Add(cWinca[i].Name);
-  If rgResize.ItemIndex= -1 Then
-    Begin
-      rgResize.ItemIndex:= 0;
-      rgResizeSelectionChanged(Sender);
-    End;
+  if rgResize.ItemIndex = -1 then
+  begin
+    rgResize.ItemIndex := 0;
+    rgResizeSelectionChanged(Sender);
+  end;
 end;
 
 procedure TfSettings.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -90,24 +92,26 @@ begin
 end;
 
 procedure TfSettings.SetSettings;
-Begin
-  fMain.StatusBar1.Panels[0].Text:= rgResize.Items[rgResize.ItemIndex];
+begin
+  fMain.StatusBar1.Panels[0].Text := rgResize.Items[rgResize.ItemIndex];
 
-  If (rgResize.ItemIndex> 0) And cbThumbnail.Checked Then
-    fMain.StatusBar1.Panels[1].Text:= 'Create thumbnail file'
-  Else
-    fMain.StatusBar1.Panels[1].Text:= 'NO thumbnail file';
+  if (rgResize.ItemIndex > 0) and cbThumbnail.Checked then
+    fMain.StatusBar1.Panels[1].Text := 'Create thumbnail file'
+  else
+    fMain.StatusBar1.Panels[1].Text := 'NO thumbnail file';
 
-  If rbSameLocation.Checked Then
-    Begin
-      If Length(edAddText.Text)> 0 Then
-        fMain.StatusBar1.Panels[2].Text:= Format('Save output files in source folder and add "%s" to filename', [edAddText.Text])
-      Else
-        fMain.StatusBar1.Panels[2].Text:= 'Save output files in source folder';
-    End
-  Else If rbNewLocation.Checked Then
-    fMain.StatusBar1.Panels[2].Text:= Format('Save all output files in "%s"', [deNewLocation.Directory]);
+  if rbSameLocation.Checked then
+  begin
+    if Length(edAddText.Text) > 0 then
+      fMain.StatusBar1.Panels[2].Text :=
+        Format('Save output files in source folder and add "%s" to filename',
+        [edAddText.Text])
+    else
+      fMain.StatusBar1.Panels[2].Text := 'Save output files in source folder';
+  end
+  else if rbNewLocation.Checked then
+    fMain.StatusBar1.Panels[2].Text :=
+      Format('Save all output files in "%s"', [deNewLocation.Directory]);
 end;
 
 end.
-

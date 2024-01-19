@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-3.0-linking-exception
 unit BGRAPaintNet;
 
 {$mode objfpc}{$H+}
@@ -18,7 +19,7 @@ interface
   and also registers a reader for BGRALayers }
 
 uses
-  Classes, SysUtils, BGRADNetDeserial, FPImage, BGRABitmapTypes, BGRABitmap, BGRALayers;
+  BGRAClasses, SysUtils, BGRADNetDeserial, FPImage, BGRABitmapTypes, BGRABitmap, BGRALayers;
 
 type
 
@@ -79,10 +80,10 @@ procedure RegisterPaintNetFormat;
 
 implementation
 
-uses zstream, Math, graphtype, Graphics, lazutf8classes, FileUtil;
+uses zstream, Math, BGRAUTF8;
 
 {$hints off}
-function BEReadLongword(Stream: TStream): longword;
+function BEReadLongword(Stream: TStream): LongWord;
 begin
   Stream.Read(Result, sizeof(Result));
   Result := BEtoN(Result);
@@ -99,12 +100,12 @@ end;
 
 function IsPaintDotNetFile(filename: string): boolean;
 var
-  stream: TFileStream;
+  stream: TFileStreamUTF8;
 begin
   Result := False;
   if FileExists(filename) then
   begin
-    stream := TFileStream.Create(filename, fmOpenRead);
+    stream := TFileStreamUTF8.Create(SysToUTF8(filename), fmOpenRead);
     Result := IsPaintDotNetStream(stream);
     stream.Free;
   end;
@@ -284,7 +285,7 @@ begin
     raise Exception.Create('Xml header size error');
   Stream.Position:= Stream.Position + XmlHeaderSize;
      {$hints off}
-  stream.Read(CompressionFormat, sizeof(CompressionFormat));
+  stream.ReadBuffer({%H-}CompressionFormat, sizeof(CompressionFormat));
      {$hints on}
   CompressionFormat := LEToN(CompressionFormat);
   Content := TDotNetDeserialization.Create;
@@ -305,6 +306,7 @@ begin
     LayerData[i] := TMemoryStream.Create;
     LoadLayer(LayerData[i], Stream, LayerDataSize(i));
   end;
+  OnLayeredBitmapLoadProgress(100);
 end;
 
 function TPaintDotNetFile.ToString: ansistring;
@@ -313,11 +315,11 @@ var
   b: byte;
 begin
   Result := 'Paint.Net document' + LineEnding + LineEnding;
-  Result += Content.ToString;
+  AppendStr(Result, Content.ToString);
   for i := 0 to NbLayers - 1 do
   begin
-    Result += LineEnding + 'Layer ' + IntToStr(i) + ' : ' + LayerName[i] + LineEnding;
-    Result += '[ ';
+    AppendStr(Result, LineEnding + 'Layer ' + IntToStr(i) + ' : ' + LayerName[i] + LineEnding);
+    AppendStr(Result, '[ ');
     LayerData[i].Position := 0;
     if LayerData[i].Size > 256 then
       nbbytes := 256
@@ -326,13 +328,13 @@ begin
     for j := 0 to nbbytes - 1 do
     begin
         {$hints off}
-      LayerData[i].Read(b, 1);
+      LayerData[i].ReadBuffer({%H-}b, 1);
         {$hints on}
-      Result += IntToHex(b, 2) + ' ';
+      AppendStr(Result, IntToHex(b, 2) + ' ');
     end;
     if LayerData[i].Size > nbbytes then
-      Result += '...';
-    Result   += ']' + lineending;
+      AppendStr(Result, '...');
+    AppendStr(Result, ']' + lineending);
   end;
 end;
 
@@ -355,7 +357,7 @@ begin
   Layers   := nil;
   for i := 0 to high(LayerData) do
     LayerData[i].Free;
-  setLength(LayerData, 0);
+  LayerData := nil;
 end;
 
 function TPaintDotNetFile.GetWidth: integer;
@@ -417,6 +419,7 @@ begin
   begin
     layerData[layer].Position := 0;
     layerData[layer].Read(Result.Data^, LayerData[layer].Size);
+    if TBGRAPixel_RGBAOrder then result.SwapRedBlue;
     Result.InvalidateBitmap;
 
     if Result.LineOrder = riloBottomToTop then
@@ -466,7 +469,7 @@ procedure TPaintDotNetFile.LoadLayer(dest: TMemoryStream; src: TStream;
   uncompressedSize: int64);
 var
   CompressionFlag: byte;
-  maxChunkSize, decompressedChunkSize, compressedChunkSize: longword;
+  maxChunkSize, decompressedChunkSize, compressedChunkSize: LongWord;
   chunks:   array of TMemoryStream;
   numChunk: integer;
   chunkCount, i: integer;
@@ -475,7 +478,7 @@ var
 
 begin
   {$hints off}
-  src.Read(CompressionFlag, 1);
+  src.ReadBuffer({%H-}CompressionFlag, 1);
   {$hints on}
   if CompressionFlag = 1 then
     dest.CopyFrom(src, uncompressedSize)
@@ -509,7 +512,7 @@ begin
       dest.CopyFrom(chunks[i], chunks[i].size);
       chunks[i].Free;
     end;
-    setlength(chunks, 0);
+    chunks := nil;
   end
   else
     raise Exception('Unknown compression flag (' + IntToStr(CompressionFlag) + ')');

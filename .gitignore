@@ -1,8 +1,8 @@
 BMP/
 BMP2/
 backup/
-
-*.exe
-*.dbg
-*.ini
+lib/
 *.xcf
+*.dbg
+*.exe
+*.ini

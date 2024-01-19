@@ -12,7 +12,7 @@ object fSettings: TfSettings
   OnCreate = FormCreate
   Position = poMainFormCenter
   SessionProperties = 'deNewLocation.Directory;edAddText.Text;rbNewLocation.Checked;rbSameLocation.Checked;rgResize.ItemIndex;cbThumbnail.Checked'
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '3.0.0.3'
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34
@@ -69,12 +69,12 @@ object fSettings: TfSettings
       Left = 8
       Height = 19
       Top = 8
-      Width = 258
+      Width = 257
       Caption = 'Same location as source, add text to filename'
       Checked = True
-      OnChange = rbSameLocationChange
       TabOrder = 1
       TabStop = True
+      OnChange = rbSameLocationChange
     end
     object edAddText: TEdit
       Left = 48
@@ -88,7 +88,7 @@ object fSettings: TfSettings
       Left = 8
       Height = 19
       Top = 64
-      Width = 221
+      Width = 219
       Caption = 'New location, keep the same filename'
       TabOrder = 2
     end
@@ -121,7 +121,7 @@ object fSettings: TfSettings
     Left = 24
     Height = 19
     Top = 248
-    Width = 158
+    Width = 156
     Caption = 'Create .png thumbnail file'
     Enabled = False
     TabOrder = 3
@@ -129,7 +129,7 @@ object fSettings: TfSettings
   object IniPropStorage1: TIniPropStorage
     StoredValues = <>
     IniFileName = 'Cameleon.ini'
-    left = 280
-    top = 8
+    Left = 280
+    Top = 8
   end
 end

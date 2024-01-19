@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-3.0-linking-exception
 {$i bgrasse.inc}
 
 {$ifdef BGRASSE_AVAILABLE}{$asmmode intel}{$endif}
@@ -66,9 +67,13 @@
              addps xmm3, xmm7
              {$ENDIF}
 
-             rsqrtps xmm3,xmm3
+             xorps xmm7,xmm7
+             comiss xmm3,xmm7
+             jna @skipnormal
 
+             rsqrtps xmm3,xmm3
              mulps xmm3, xmm1  //apply
+             @skipnormal:
 
              {$ifdef cpux86_64}
              movaps [rax+16], xmm3  //Normal
@@ -141,20 +146,20 @@
           movups xmm5, texPos
           movups xmm1, texStep
         end;
-        InvZPos += zStep;
+        IncF(InvZPos, zStep);
         asm
           addps xmm5, xmm1
           movlps texPos, xmm5
         end;
         {$ELSE}
-        InvZPos += zStep;
+        IncF(InvZPos, zStep);
         {$ENDIF}
       {$ELSE}
         {$IFNDEF PARAM_USESOLIDCOLOR}
-        texPos.x += texStep.x;
-        texPos.y += texStep.y;
+        IncF(texPos.x, texStep.x);
+        IncF(texPos.y, texStep.y);
         {$ENDIF}
-        InvZPos += zStep;
+        IncF(InvZPos, zStep);
       {$ENDIF}
 
       {$IFDEF PARAM_USESHADER}
@@ -187,8 +192,8 @@
         {$ELSE}
           with ShaderContext^ do
           begin
-            PositionInvZ += PositionStepInvZ;
-            NormalInvZ += NormalStepInvZ;
+            PositionInvZ.Offset(PositionStepInvZ);
+            NormalInvZ.Offset(NormalStepInvZ);
           end;
         {$ENDIF}
       {$ENDIF}

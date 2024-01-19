@@ -10,7 +10,7 @@ object fAbout: TfAbout
   ClientWidth = 290
   OnActivate = FormActivate
   Position = poMainFormCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '3.0.0.3'
   object ButtonPanel1: TButtonPanel
     Left = 6
     Height = 34

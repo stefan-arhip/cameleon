@@ -1,16 +1,10 @@
+// SPDX-License-Identifier: LGPL-3.0-linking-exception
 {*****************************************************************************}
 {
-    This file is part of the Free Pascal's "Free Components Library".
+    The original file is part of the Free Pascal's "Free Components Library".
     Copyright (c) 2003 by Mazen NEIFER of the Free Pascal development team
 
-    Targa reader implementation.
-
-    See the file COPYING.FPC, included in this distribution,
-    for details about the copyright.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+    Targa reader implementation modified by circular.
 }
 {*****************************************************************************}
 
@@ -23,7 +17,7 @@ unit BGRAReadTGA;
 
 interface
 
-uses FPReadTGA, FPimage, Classes;
+uses FPReadTGA, FPimage, BGRAClasses;
 
 type
   { TBGRAReaderTarga }
@@ -93,7 +87,7 @@ end;
 Procedure TBGRAReaderTarga.WriteScanLine(Row : Integer; Img : TFPCustomImage);
 Var
   Col : Integer;
-  Value   : NativeUint;
+  Value   : UInt32or64;
   P   : PByte;
   PDest: PBGRAPixel;
 
@@ -115,9 +109,7 @@ begin
         begin
           for Col:=Img.Width-1 downto 0 do
           begin
-            PWord(PDest)^ := PWord(P)^;
-            (PByte(PDest)+2)^ := (PByte(P)+2)^;
-            (PByte(PDest)+3)^ := 255;
+            PDest^ := BGRA((P+2)^,(P+1)^,P^);
             inc(Pdest);
             Inc(p,3);
           end;
@@ -128,12 +120,7 @@ begin
             Value:=P[0];
             inc(P);
             Value:=value or (P[0] shl 8);
-            With PDest^ do
-               begin
-               Red:=((value)shr 10) shl 3;
-               Green:=((value)shr 5) shl 3;
-               Blue:=((value)) shl 3;
-               end;
+            PDest^ := BGRA(((value)shr 10) shl 3,((value)shr 5) shl 3,((value)) shl 3);
             Inc(PDest);
             Inc(P);
           end;

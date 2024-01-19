@@ -37,25 +37,25 @@ implementation
 
 {$R *.lfm}
 
-Uses Unit1;
+uses Unit1;
 
-{ TfAbout }
+  { TfAbout }
 
 procedure TfAbout.Label4Click(Sender: TObject);
 begin
-  OpenURL((Sender As TLabel).Caption);
+  OpenURL((Sender as TLabel).Caption);
 end;
 
 procedure TfAbout.FormActivate(Sender: TObject);
-Var i: Integer;
-    sDevices: String;
+var
+  i: integer;
+  sDevices: string;
 begin
-  sDevices:= '';
-  For i:= 1 To Length(cWinca) Do
-    sDevices:= sDevices+ ', '+ cWinca[i- 1].Name;
+  sDevices := '';
+  for i := 1 to Length(cWinca) do
+    sDevices := sDevices + ', ' + cWinca[i - 1].Name;
   Delete(sDevices, 1, 2);
-  lAbout.Caption:= Format(lAbout.Caption, [Unit1.cSupportedFileType, sDevices]);
+  lAbout.Caption := Format(lAbout.Caption, [Unit1.cSupportedFileType, sDevices]);
 end;
 
 end.
-
